@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+$:.push File.expand_path("../../lib", __FILE__)
+require File.join(File.expand_path("../../lib", __FILE__), "enklawa/api")
+require File.join(File.expand_path("../../lib", __FILE__), "enklawa/cli")
+Enklawa::Cli.start(ARGV)
