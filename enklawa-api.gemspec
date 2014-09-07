@@ -18,7 +18,10 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
+  spec.add_dependency "json"
+  spec.add_dependency "pry"
   spec.add_dependency "thor"
+  spec.add_dependency "sanitize"
   spec.add_dependency "nokogiri"
   spec.add_dependency "feedjira", "~> 1.4"
   spec.add_development_dependency "webmock"
