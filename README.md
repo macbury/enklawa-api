@@ -18,6 +18,9 @@ Next you can use it to download all programs:
 
 <http://enklawa.macbury.ninja/>
 
+## More info
+<http://macbury.ninja/2014/9/enklawa-api-gem>
+
 ## Contributing
 
 1. Fork it ( https://github.com/macbury/enklawa-api/fork )
