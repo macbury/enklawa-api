@@ -65,6 +65,7 @@ module Enklawa
         episode.pub_date    = entry.published
 
         if episode.mp3
+          episode.check_if_image_exists_or_use_from_program(program)
           episode.duration    = entry.enclosure_length.to_i
           program << episode
         end

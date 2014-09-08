@@ -1,28 +1,26 @@
-# Enklawa::Api
+# Enklawa API
 
-TODO: Write a gem description
+This gem provides simple api wrapper for enklawa.net radio resources like programs and episodes. Everything is stored in one json file for easy fetching.
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-    gem 'enklawa-api'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
+Install it using rubygems:
 
     $ gem install enklawa-api
 
 ## Usage
 
-TODO: Write usage instructions here
+Next you can use it to download all programs:
+
+    $ enklawa save output.json
+
+## Example output
+
+<http://enklawa.macbury.ninja/>
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/enklawa-api/fork )
+1. Fork it ( https://github.com/macbury/enklawa-api/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
