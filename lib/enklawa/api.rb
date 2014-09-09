@@ -1,6 +1,7 @@
 require "enklawa/api/version"
 require "enklawa/api/response"
 require "enklawa/api/program"
+require "enklawa/api/category"
 require "enklawa/api/episode"
 require "enklawa/api/request"
 require "open-uri"

@@ -4,14 +4,15 @@ require "sanitize"
 module Enklawa
   module Api
     class Request
-      INFO_XML_URL = "http://www.enklawa.net/info.xml"
-
+      INFO_XML_URL  = "http://www.enklawa.net/info.xml"
+      MAIN_PAGE_URL = "http://enklawa.net"
       def initialize
 
       end
 
       def get!
         @response = Response.new
+        get_categories!
         get_info!
         get_programs!
         get_episodes!
@@ -20,6 +21,18 @@ module Enklawa
       end
 
       private
+
+      def get_categories!
+        doc = Nokogiri::HTML(open(MAIN_PAGE_URL))
+
+        doc.search("select#ProgramsSelector option").each do |option|
+          category      = Category.new
+          category.name = option.text
+          category.id   = option[:value].to_i
+          
+          @response.add_category(category)
+        end
+      end
 
       def get_info!
         @info_xml_doc    = Nokogiri::XML(open(INFO_XML_URL).read)
@@ -38,6 +51,7 @@ module Enklawa
           program.name         = program_node.search("name").text
           program.description  = program_node.search("description").text
           program.author       = program_node.search("author").text
+          program.category_id  = program_node.search("cat").text.to_i
           program.live         = program_node.search("live").size > 0
           @response.programs << program
         end

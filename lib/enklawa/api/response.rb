@@ -4,7 +4,8 @@ module Enklawa
       attr_accessor :skype, :phone, :radio
 
       def initialize
-        @programs = []
+        @programs   = []
+        @categories = []
       end
 
       def programs
@@ -15,11 +16,17 @@ module Enklawa
         @programs << program
       end
 
+      def add_category(category)
+        @categories << category
+      end
+
       def to_h
         {
+          version: VERSION,
           skype: skype,
           phone: phone,
           radio: radio,
+          categories: @categories.map(&:to_h),
           programs: @programs.map(&:to_h)
         }
       end

@@ -1,6 +1,6 @@
 module Enklawa
   module Api
-    class Program < Struct.new(:id, :name, :description, :author, :live)
+    class Program < Struct.new(:id, :name, :description, :author, :live, :category_id)
       attr_accessor :episodes
 
       def initialize
@@ -28,6 +28,7 @@ module Enklawa
           live: live,
           image: image,
           feed_url: feed_url,
+          category_id: category_id,
           episodes: episodes.map(&:to_h)
         }
       end
