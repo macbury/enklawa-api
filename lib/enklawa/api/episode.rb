@@ -23,7 +23,7 @@ module Enklawa
           name: name,
           description: description,
           mp3: mp3,
-          pub_date: pub_date,
+          pub_date: pub_date.to_i,
           link: link,
           duration: duration,
           image: image
