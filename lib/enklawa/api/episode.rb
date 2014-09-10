@@ -19,7 +19,7 @@ module Enklawa
 
       def to_h
         {
-          id: id,
+          id: id.to_i,
           name: name,
           description: description,
           mp3: mp3,
