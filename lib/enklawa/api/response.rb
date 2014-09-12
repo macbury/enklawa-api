@@ -5,6 +5,7 @@ module Enklawa
 
       def initialize
         @programs   = []
+        @threads    = []
         @categories = []
       end
 
@@ -20,12 +21,17 @@ module Enklawa
         @categories << category
       end
 
+      def add_thread(category)
+        @threads << category
+      end
+
       def to_h
         {
           version: VERSION,
           skype: skype,
           phone: phone,
           radio: radio,
+          forum: @threads.map(&:to_h),
           categories: @categories.map(&:to_h),
           programs: @programs.map(&:to_h)
         }

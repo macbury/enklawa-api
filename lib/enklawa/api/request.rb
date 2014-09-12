@@ -4,14 +4,16 @@ require "sanitize"
 module Enklawa
   module Api
     class Request
-      INFO_XML_URL  = "http://www.enklawa.net/info.xml"
-      MAIN_PAGE_URL = "http://enklawa.net"
+      INFO_XML_URL   = "http://www.enklawa.net/info.xml"
+      MAIN_PAGE_URL  = "http://enklawa.net"
+      FORUM_FEED_URL = "http://forum.enklawa.net/feed.php"
       def initialize
 
       end
 
       def get!
         @response = Response.new
+        get_forum_feeds!
         get_categories!
         get_info!
         get_programs!
@@ -29,7 +31,7 @@ module Enklawa
           category      = Category.new
           category.name = option.text
           category.id   = option[:value].to_i
-          
+
           @response.add_category(category)
         end
       end
@@ -67,6 +69,21 @@ module Enklawa
         end
 
         @response.programs.reject! { |program| program.episodes.empty? }
+      end
+
+      def get_forum_feeds!
+        feed = Feedjira::Feed.fetch_and_parse(FORUM_FEED_URL)
+        return if feed == 404
+
+        feed.entries.each do |entry|
+          thread             = ForumThread.new
+          thread.id          = entry.id
+          thread.title       = entry.title
+          thread.link        = entry.url
+          thread.content     = entry.content
+          thread.pub_date    = entry.published
+          @response.add_thread(thread)
+        end
       end
 
       def build_episode_from_entry(entry, program)
