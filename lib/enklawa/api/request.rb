@@ -82,6 +82,7 @@ module Enklawa
           thread.link        = entry.url
           thread.content     = entry.content
           thread.pub_date    = entry.published
+          thread.author      = entry.author
           @response.add_thread(thread)
         end
       end
