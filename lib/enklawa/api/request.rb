@@ -100,7 +100,7 @@ module Enklawa
           temp_output_file_name = "/tmp/episode_metadata_#{episode.id}.txt"
           `ffmpeg2theora #{episode.mp3} > #{temp_output_file_name} 2>&1` unless File.exists?(temp_output_file_name)
           if open(temp_output_file_name).read.match(/.+Duration:\s+(\d{2}):(\d{2}):(\d{2}).+/i)
-            episode.duration    = $3.to_i + ($2.to_i * 60) + ($3.to_i * 60 * 60)
+            episode.duration    = ($3.to_i * 1000) + ($2.to_i * 60 * 1000) + ($1.to_i * 3600 * 1000)
             episode.check_if_image_exists_or_use_from_program(program)
             program << episode
           end
