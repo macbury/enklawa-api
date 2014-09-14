@@ -97,9 +97,13 @@ module Enklawa
         episode.pub_date    = entry.published
 
         if episode.mp3
-          episode.check_if_image_exists_or_use_from_program(program)
-          episode.duration    = entry.enclosure_length.to_i
-          program << episode
+          temp_output_file_name = "/tmp/episode_metadata_#{episode.id}.txt"
+          `ffmpeg2theora #{episode.mp3} > #{temp_output_file_name} 2>&1` unless File.exists?(temp_output_file_name)
+          if open(temp_output_file_name).read.match(/.+Duration:\s+(\d{2}):(\d{2}):(\d{2}).+/i)
+            episode.duration    = $3.to_i + ($2.to_i * 60) + ($3.to_i * 60 * 60)
+            episode.check_if_image_exists_or_use_from_program(program)
+            program << episode
+          end
         end
       end
     end
