@@ -113,7 +113,7 @@ module Enklawa
 
       def get_duration(episode)
         return @cache['durations'][episode.id] if @cache['durations'].key?(episode.id)
-        
+
         duration = nil
         temp_output_file_name = "/tmp/episode_metadata.txt"
         `ffmpeg2theora #{episode.mp3} > #{temp_output_file_name} 2>&1`
@@ -135,13 +135,9 @@ module Enklawa
         episode.pub_date    = entry.published
 
         if episode.mp3
-          temp_output_file_name = "/tmp/episode_metadata_#{episode.id}.txt"
-          `ffmpeg2theora #{episode.mp3} > #{temp_output_file_name} 2>&1` unless File.exists?(temp_output_file_name)
-          if open(temp_output_file_name).read.match(/.+Duration:\s+(\d{2}):(\d{2}):(\d{2}).+/i)
-            episode.duration    =
-            episode.image       = check_if_image_exists_or_use_from_program(program, episode)
-            program << episode
-          end
+          episode.duration    = get_duration(episode)
+          episode.image       = check_if_image_exists_or_use_from_program(program, episode)
+          program << episode  if episode.duration
         end
       end
     end
