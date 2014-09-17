@@ -1,14 +1,19 @@
 require "feedjira"
 require "sanitize"
-
+require "yaml"
 module Enklawa
   module Api
     class Request
-      INFO_XML_URL   = "http://www.enklawa.net/info.xml"
-      MAIN_PAGE_URL  = "http://enklawa.net"
-      FORUM_FEED_URL = "http://forum.enklawa.net/feed.php"
+      INFO_XML_URL       = "http://www.enklawa.net/info.xml"
+      MAIN_PAGE_URL      = "http://enklawa.net"
+      FORUM_FEED_URL     = "http://forum.enklawa.net/feed.php"
+      ENKLAWA_CACHE_FILE = '/tmp/enklawa_cache.yml'
       def initialize
-
+        @cache = YAML::load_file(ENKLAWA_CACHE_FILE) if File.exists?(ENKLAWA_CACHE_FILE)
+        @cache ||= {
+          'images' => {},
+          'durations' => {}
+        }
       end
 
       def get!
@@ -18,6 +23,8 @@ module Enklawa
         get_info!
         get_programs!
         get_episodes!
+
+        File.open(ENKLAWA_CACHE_FILE, 'w') {|f| f.write @cache.to_yaml }
 
         @response
       end
@@ -87,6 +94,37 @@ module Enklawa
         end
       end
 
+      def check_if_image_exists_or_use_from_program(program, episode)
+        return @cache['images'][episode.id] if @cache['images'].key?(episode.id)
+        image = "http://www.enklawa.net/images/episodes/#{episode.id}.jpg"
+
+        uri = URI(image)
+
+        request  = Net::HTTP.new uri.host
+        response = request.request_head uri.path
+        unless response.code.to_i == 200
+          image = program.image
+        end
+
+        @cache['images'][episode.id] = image
+
+        return image
+      end
+
+      def get_duration(episode)
+        return @cache['durations'][episode.id] if @cache['durations'].key?(episode.id)
+        
+        duration = nil
+        temp_output_file_name = "/tmp/episode_metadata.txt"
+        `ffmpeg2theora #{episode.mp3} > #{temp_output_file_name} 2>&1`
+        if open(temp_output_file_name).read.match(/.+Duration:\s+(\d{2}):(\d{2}):(\d{2}).+/i)
+          duration = ($3.to_i * 1000) + ($2.to_i * 60 * 1000) + ($1.to_i * 3600 * 1000)
+          @cache['durations'][episode.id] = duration
+        end
+
+        return duration
+      end
+
       def build_episode_from_entry(entry, program)
         episode             = Episode.new
         episode.id          = entry.id
@@ -100,8 +138,8 @@ module Enklawa
           temp_output_file_name = "/tmp/episode_metadata_#{episode.id}.txt"
           `ffmpeg2theora #{episode.mp3} > #{temp_output_file_name} 2>&1` unless File.exists?(temp_output_file_name)
           if open(temp_output_file_name).read.match(/.+Duration:\s+(\d{2}):(\d{2}):(\d{2}).+/i)
-            episode.duration    = ($3.to_i * 1000) + ($2.to_i * 60 * 1000) + ($1.to_i * 3600 * 1000)
-            episode.check_if_image_exists_or_use_from_program(program)
+            episode.duration    =
+            episode.image       = check_if_image_exists_or_use_from_program(program, episode)
             program << episode
           end
         end

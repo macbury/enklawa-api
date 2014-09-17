@@ -29,6 +29,7 @@ module Enklawa
         {
           version: VERSION,
           skype: skype,
+          build: Time.now.to_s,
           phone: phone,
           radio: radio,
           forum: @threads.map(&:to_h),
