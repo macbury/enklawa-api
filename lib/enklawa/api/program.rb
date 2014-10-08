@@ -1,14 +1,18 @@
 module Enklawa
   module Api
     class Program < Struct.new(:id, :name, :description, :author, :live, :category_id)
-      attr_accessor :episodes
+      attr_accessor :episodes, :base_url
 
       def initialize
         self.episodes = []
       end
 
       def image
-        "http://www.enklawa.net/images/programs/#{id}.jpg"
+        if base_url.match("enklawa")
+          File.join([base_url, "/images/programs/#{id}.jpg"])
+        else
+          File.join([base_url, "/images/programs/240/#{id}.jpg"])
+        end
       end
 
       def <<(episode)
@@ -16,7 +20,7 @@ module Enklawa
       end
 
       def feed_url
-        "http://www.enklawa.net/program#{self.id}.xml"
+        File.join([base_url, "/program#{self.id}.xml"])
       end
 
       def to_h

@@ -10,8 +10,8 @@ module Enklawa
     end
 
     desc "save", "fetch and save episodes"
-    def save(path)
-      @response = Enklawa::Api.fetch
+    def save(url, path)
+      @response = Enklawa::Api.fetch(url)
       @response.save(path)
     end
 

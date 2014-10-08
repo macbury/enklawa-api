@@ -12,8 +12,8 @@ require "cgi"
 module Enklawa
   module Api
 
-    def self.fetch
-      request = Request.new
+    def self.fetch(url)
+      request = Request.new(url)
       request.get!
     end
 
